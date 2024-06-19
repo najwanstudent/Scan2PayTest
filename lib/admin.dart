@@ -30,7 +30,6 @@ class _AdminScreenState extends State<AdminScreen> {
 
       if (result != null) {
         _processQrData(result!.code);
-        controller.stopCamera(); // Stop the camera after scanning
       }
     });
   }
@@ -41,6 +40,7 @@ class _AdminScreenState extends State<AdminScreen> {
     final data = qrData.split('|');
     if (data.length != 2) {
       print('Invalid QR data format');
+      _showResultDialog('Invalid QR data format', false);
       return; // Ensure QR data has both user ID and balance
     }
 
@@ -55,6 +55,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
     if (!userDoc.exists) {
       print('No user found with ID: $userId');
+      _showResultDialog('No user found with ID: $userId', false);
       return; // No user found
     }
 
@@ -69,12 +70,28 @@ class _AdminScreenState extends State<AdminScreen> {
     print('New balance: $newBalance');
 
     // Show confirmation
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Balance updated: \$$newBalance')),
-    );
+    _showResultDialog('Balance updated: \$$newBalance', true);
+  }
 
-    // Navigate back to home screen
-    Navigator.pop(context);
+  void _showResultDialog(String message, bool success) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(success ? 'Success' : 'Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                controller?.resumeCamera(); // Resume the camera
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
