@@ -13,8 +13,7 @@ class _AdminScreenState extends State<AdminScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
-  int balanceToDeduct = 0;
-  int amountToTransfer = 0;
+  final int balanceToDeduct = 100; // Set the amount to deduct automatically
 
   @override
   void dispose() {
@@ -42,24 +41,21 @@ class _AdminScreenState extends State<AdminScreen> {
     final data = qrData.split('|');
     if (data.length != 2) return; // Ensure QR data has both user ID and balance
 
-    final userQr = data[0];
-    final balanceToDeduct = int.tryParse(data[1]) ?? 0;
+    final userId = data[0];
+    final userBalance = int.tryParse(data[1]) ?? 0;
 
     // Fetch user document
-    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .where('qr', isEqualTo: userQr)
-        .limit(1)
-        .get();
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
 
-    if (userSnapshot.docs.isEmpty) return; // No user found
+    if (!userDoc.exists) return; // No user found
 
-    DocumentReference userDoc = userSnapshot.docs.first.reference;
-    int currentBalance = userSnapshot.docs.first['amount_balance'];
+    int currentBalance = userDoc['amount_balance'];
 
     // Update balance
     int newBalance = currentBalance - balanceToDeduct;
-    await userDoc.update({'amount_balance': newBalance});
+    if (newBalance < 0) newBalance = 0; // Ensure balance doesn't go negative
+    await userDoc.reference.update({'amount_balance': newBalance});
 
     // Show confirmation
     ScaffoldMessenger.of(context).showSnackBar(
@@ -68,32 +64,6 @@ class _AdminScreenState extends State<AdminScreen> {
 
     // Navigate back to home screen
     Navigator.pop(context);
-  }
-
-  Future<void> _transferMoney() async {
-    // Replace with your actual Firestore path and document ID
-    String userId = "QSMVojIge9Z0QUfrIwg9"; // Replace with the actual user ID
-
-    DocumentReference userDoc =
-        FirebaseFirestore.instance.collection('Users').doc(userId);
-
-    DocumentSnapshot userSnapshot = await userDoc.get();
-    int currentBalance = userSnapshot['amount_balance'];
-
-    // Update balance
-    int newBalance = currentBalance + amountToTransfer;
-    await userDoc.update({'amount_balance': newBalance});
-
-    // Show confirmation
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(
-              'Transferred: \$$amountToTransfer. New Balance: \$$newBalance')),
-    );
-
-    setState(() {
-      amountToTransfer = 0; // Reset the transfer amount
-    });
   }
 
   @override
@@ -116,45 +86,6 @@ class _AdminScreenState extends State<AdminScreen> {
                   ? Text(
                       'Barcode Type: ${result!.format}   Data: ${result!.code}')
                   : const Text('Scan a code'),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(labelText: 'Amount to Deduct'),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  balanceToDeduct = int.tryParse(value) ?? 0;
-                });
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () => _processQrData(result?.code),
-              child: const Text('Deduct Amount'),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration:
-                  const InputDecoration(labelText: 'Amount to Transfer'),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  amountToTransfer = int.tryParse(value) ?? 0;
-                });
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: _transferMoney,
-              child: const Text('Transfer Money'),
             ),
           ),
         ],

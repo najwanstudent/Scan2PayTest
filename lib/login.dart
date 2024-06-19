@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:scan2pay/homescreen.dart';
+import 'package:scan2pay/signup.dart'; // Import the SignUpPage
 
 import 'admin.dart';
 
@@ -110,6 +111,18 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _login,
               child: const Text('Login'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SignUpPage()), // Navigate to SignUpPage
+                );
+              },
+              child: const Text('Sign Up'),
             ),
           ],
         ),
