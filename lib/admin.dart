@@ -39,23 +39,34 @@ class _AdminScreenState extends State<AdminScreen> {
     if (qrData == null) return;
 
     final data = qrData.split('|');
-    if (data.length != 2) return; // Ensure QR data has both user ID and balance
+    if (data.length != 2) {
+      print('Invalid QR data format');
+      return; // Ensure QR data has both user ID and balance
+    }
 
     final userId = data[0];
     final userBalance = int.tryParse(data[1]) ?? 0;
+
+    print('QR Data: userId = $userId, userBalance = $userBalance');
 
     // Fetch user document
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('Users').doc(userId).get();
 
-    if (!userDoc.exists) return; // No user found
+    if (!userDoc.exists) {
+      print('No user found with ID: $userId');
+      return; // No user found
+    }
 
     int currentBalance = userDoc['amount_balance'];
+    print('Current balance: $currentBalance');
 
     // Update balance
     int newBalance = currentBalance - balanceToDeduct;
     if (newBalance < 0) newBalance = 0; // Ensure balance doesn't go negative
     await userDoc.reference.update({'amount_balance': newBalance});
+
+    print('New balance: $newBalance');
 
     // Show confirmation
     ScaffoldMessenger.of(context).showSnackBar(
