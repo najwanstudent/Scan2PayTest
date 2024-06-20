@@ -13,7 +13,8 @@ class _AdminScreenState extends State<AdminScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
-  final int balanceToDeduct = 100; // Set the amount to deduct automatically
+  int balanceToDeduct = 0;
+  int amountToTransfer = 0;
 
   @override
   void dispose() {
@@ -30,6 +31,7 @@ class _AdminScreenState extends State<AdminScreen> {
 
       if (result != null) {
         _processQrData(result!.code);
+        controller.stopCamera(); // Stop the camera after scanning
       }
     });
   }
@@ -38,60 +40,60 @@ class _AdminScreenState extends State<AdminScreen> {
     if (qrData == null) return;
 
     final data = qrData.split('|');
-    if (data.length != 2) {
-      print('Invalid QR data format');
-      _showResultDialog('Invalid QR data format', false);
-      return; // Ensure QR data has both user ID and balance
-    }
+    if (data.length != 2) return; // Ensure QR data has both user ID and balance
 
-    final userId = data[0];
-    final userBalance = int.tryParse(data[1]) ?? 0;
-
-    print('QR Data: userId = $userId, userBalance = $userBalance');
+    final userQr = data[0];
+    final balanceToDeduct = int.tryParse(data[1]) ?? 0;
 
     // Fetch user document
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('qr', isEqualTo: userQr)
+        .limit(1)
+        .get();
 
-    if (!userDoc.exists) {
-      print('No user found with ID: $userId');
-      _showResultDialog('No user found with ID: $userId', false);
-      return; // No user found
-    }
+    if (userSnapshot.docs.isEmpty) return; // No user found
 
-    int currentBalance = userDoc['amount_balance'];
-    print('Current balance: $currentBalance');
+    DocumentReference userDoc = userSnapshot.docs.first.reference;
+    int currentBalance = userSnapshot.docs.first['amount_balance'];
 
     // Update balance
     int newBalance = currentBalance - balanceToDeduct;
-    if (newBalance < 0) newBalance = 0; // Ensure balance doesn't go negative
-    await userDoc.reference.update({'amount_balance': newBalance});
-
-    print('New balance: $newBalance');
+    await userDoc.update({'amount_balance': newBalance});
 
     // Show confirmation
-    _showResultDialog('Balance updated: \$$newBalance', true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Balance updated: \$$newBalance')),
+    );
+
+    // Navigate back to home screen
+    Navigator.pop(context);
   }
 
-  void _showResultDialog(String message, bool success) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(success ? 'Success' : 'Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                controller?.resumeCamera(); // Resume the camera
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+  Future<void> _transferMoney() async {
+    // Replace with your actual Firestore path and document ID
+    String userId = "QSMVojIge9Z0QUfrIwg9"; // Replace with the actual user ID
+
+    DocumentReference userDoc =
+        FirebaseFirestore.instance.collection('Users').doc(userId);
+
+    DocumentSnapshot userSnapshot = await userDoc.get();
+    int currentBalance = userSnapshot['amount_balance'];
+
+    // Update balance
+    int newBalance = currentBalance + amountToTransfer;
+    await userDoc.update({'amount_balance': newBalance});
+
+    // Show confirmation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text(
+              'Transferred: \$$amountToTransfer. New Balance: \$$newBalance')),
     );
+
+    setState(() {
+      amountToTransfer = 0; // Reset the transfer amount
+    });
   }
 
   @override
@@ -114,6 +116,45 @@ class _AdminScreenState extends State<AdminScreen> {
                   ? Text(
                       'Barcode Type: ${result!.format}   Data: ${result!.code}')
                   : const Text('Scan a code'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: const InputDecoration(labelText: 'Amount to Deduct'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  balanceToDeduct = int.tryParse(value) ?? 0;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () => _processQrData(result?.code),
+              child: const Text('Deduct Amount'),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration:
+                  const InputDecoration(labelText: 'Amount to Transfer'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                setState(() {
+                  amountToTransfer = int.tryParse(value) ?? 0;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: _transferMoney,
+              child: const Text('Transfer Money'),
             ),
           ),
         ],
