@@ -29,13 +29,14 @@ class Scan2PayApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       routes: {
-        '/': (context) => const LoginPage(), // Route to LoginPage
-        '/home-screen': (context) => const HomeScreen(), // Route to HomeScreen
+        '/': (context) => const LoginPage(),
+        '/home-screen': (context) => const HomeScreen(
+              userUid: '',
+            ),
         '/transaction-history': (context) => const TransactionHistory(),
         '/edit-profile': (context) => const editProfile(),
         '/faq': (context) => const FAQ(),
-        '/admin': (context) =>
-            const AdminScreen(), // Add route for admin screen
+        '/admin': (context) => const AdminScreen(),
       },
     );
   }
