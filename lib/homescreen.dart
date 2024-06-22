@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int balance = 0;
+  num balance = 0;
   String qrData = "";
   String icNumber = "";
 
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchBalance() async {
     // Replace with your actual Firestore path and document ID
-    String userId = "QSMVojIge9Z0QUfrIwg9"; // Replace with the actual user ID
+    String userId = "s1b7GDpJbC2hNkdCbsFB"; // Replace with the actual user ID
 
     DocumentSnapshot userDoc =
         await FirebaseFirestore.instance.collection('Users').doc(userId).get();
