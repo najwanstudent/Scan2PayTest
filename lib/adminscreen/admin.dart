@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scan2pay/drawer.dart';
 
 import 'admindrawer.dart';
 

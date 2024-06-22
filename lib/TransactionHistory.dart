@@ -24,7 +24,7 @@ class TransactionHistoryScreen extends StatelessWidget {
             itemCount: transactions.length,
             itemBuilder: (context, index) {
               final transaction = transactions[index];
-              final userId = transaction['user_id'];
+              final userId = transaction['ic_number'];
               final amount = transaction['amount'];
               final timestamp =
                   (transaction['timestamp'] as Timestamp).toDate();
