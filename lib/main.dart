@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:scan2pay/TransactionHistory.dart';
 import 'package:scan2pay/adminscreen/inputamount.dart';
 import 'package:scan2pay/homescreen.dart'; // Import the HomeScreen class
 
-import 'TransactionHistory.dart';
 import 'adminscreen/admin.dart';
 import 'editProfile.dart';
 import 'faq.dart';
@@ -32,7 +32,7 @@ class Scan2PayApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginPage(), // Route to LoginPage
         '/home-screen': (context) => const HomeScreen(), // Route to HomeScreen
-        '/transaction-history': (context) => const TransactionHistory(),
+        '/transaction-history': (context) => TransactionHistoryScreen(),
         '/edit-profile': (context) => const editProfile(),
         '/faq': (context) => const FAQ(),
         '/admin': (context) =>

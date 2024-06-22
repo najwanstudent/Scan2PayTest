@@ -1,18 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'drawer.dart';
 
-class TransactionHistory extends StatelessWidget {
-  const TransactionHistory({super.key});
-
+class TransactionHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
       ),
-      drawer: const AppDrawer(), // Add this line to include the drawer
-      body: const Center(
-        child: Text('Transaction History Page'),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('Transactions')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final transactions = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = transactions[index];
+              final userId = transaction['user_id'];
+              final amount = transaction['amount'];
+              final timestamp =
+                  (transaction['timestamp'] as Timestamp).toDate();
+
+              return ListTile(
+                title: Text('User ID: $userId'),
+                subtitle: Text('Amount: \$$amount\nDate: $timestamp'),
+              );
+            },
+          );
+        },
       ),
     );
   }
