@@ -5,14 +5,16 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String userUid;
+
+  const HomeScreen({Key? key, required this.userUid}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int balance = 0;
+  num balance = 0;
   String qrData = "";
   String icNumber = "";
 
@@ -23,15 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchBalance() async {
-    // Replace with your actual Firestore path and document ID
-    String userId = "QSMVojIge9Z0QUfrIwg9"; // Replace with the actual user ID
-
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.userUid)
+        .get();
 
     setState(() {
       balance = userDoc['amount_balance'];
-      qrData = userDoc['qr']; // Assuming the QR data includes the user QR code
+
       icNumber = userDoc['ic_number'];
     });
   }
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Scan2Pay'),
       ),
-      drawer: const AppDrawer(),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -67,8 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => Navigator.pushNamed(
-                  context, '/admin'), // Navigate to AdminScreen
+              onPressed: () {
+                Navigator.pushNamed(context, '/admin');
+              },
               child: const Text('SCAN QR'),
             ),
           ],
@@ -78,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _printQr(BuildContext context) {
-    // Implement print functionality
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Print functionality is not implemented')),
     );
