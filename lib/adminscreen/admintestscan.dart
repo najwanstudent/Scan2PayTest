@@ -62,6 +62,13 @@ class _AdminTestScanState extends State<AdminTestScan> {
     num newBalance = currentBalance - widget.balanceToDeduct;
     await userDoc.update({'amount_balance': newBalance});
 
+    // Log the transaction
+    await FirebaseFirestore.instance.collection('Transactions').add({
+      'ic_number': data,
+      'amount': widget.balanceToDeduct,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
     // Show confirmation
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Balance updated: \$$newBalance')),
