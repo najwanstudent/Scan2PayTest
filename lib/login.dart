@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:scan2pay/homescreen.dart';
-import 'package:scan2pay/signup.dart'; // Import the SignUpPage
+import 'package:scan2pay/signup.dart';
 
 import 'adminscreen/admin.dart';
 
@@ -50,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // Check if the user is in the 'Users' collection
     QuerySnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('Users')
         .where('ic_number', isEqualTo: icNumber)
@@ -59,15 +58,14 @@ class _LoginPageState extends State<LoginPage> {
         .get();
 
     if (userSnapshot.docs.isNotEmpty) {
-      // User found, navigate to main screen
+      String userUid = userSnapshot.docs.first.id;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => HomeScreen(userUid: userUid)),
       );
       return;
     }
 
-    // Check if the user is in the 'Admin' collection
     QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
         .collection('Admin')
         .where('ic_number', isEqualTo: icNumber)
@@ -76,7 +74,6 @@ class _LoginPageState extends State<LoginPage> {
         .get();
 
     if (adminSnapshot.docs.isNotEmpty) {
-      // Admin found, navigate to admin screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AdminScreen()),
@@ -84,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // No matching user or admin found
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Invalid IC number or password')),
     );
@@ -117,9 +113,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          SignUpPage()), // Navigate to SignUpPage
+                  MaterialPageRoute(builder: (context) => SignUpPage()),
                 );
               },
               child: const Text('Sign Up'),
