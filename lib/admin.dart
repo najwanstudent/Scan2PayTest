@@ -14,6 +14,7 @@ class _AdminScreenState extends State<AdminScreen> {
   Barcode? result;
   QRViewController? controller;
   int balanceToDeduct = 0;
+  int amountToDeduct = 10;
   int amountToTransfer = 0;
 
   @override
@@ -39,16 +40,17 @@ class _AdminScreenState extends State<AdminScreen> {
   Future<void> _processQrData(String? qrData) async {
     if (qrData == null) return;
 
-    final data = qrData.split('|');
-    if (data.length != 2) return; // Ensure QR data has both user ID and balance
+    final data = qrData;
+    if (data.length != 12)
+      return; // Ensure QR data has both user ID and balance
 
-    final userQr = data[0];
-    final balanceToDeduct = int.tryParse(data[1]) ?? 0;
+    //final userQr = data[0];
+    double balanceToDeduct = 10;
 
     // Fetch user document
     QuerySnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('Users')
-        .where('qr', isEqualTo: userQr)
+        .where('ic_number', isEqualTo: data)
         .limit(1)
         .get();
 
@@ -58,7 +60,7 @@ class _AdminScreenState extends State<AdminScreen> {
     int currentBalance = userSnapshot.docs.first['amount_balance'];
 
     // Update balance
-    int newBalance = currentBalance - balanceToDeduct;
+    double newBalance = currentBalance - balanceToDeduct;
     await userDoc.update({'amount_balance': newBalance});
 
     // Show confirmation
