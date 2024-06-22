@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scan2pay/homescreen.dart';
 import 'package:scan2pay/signup.dart';
 
-import 'admin.dart';
+import 'adminscreen/admin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
