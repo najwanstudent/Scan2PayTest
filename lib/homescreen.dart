@@ -25,10 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchBalance() async {
+
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.userUid)
-        .get();
+        .get();   
 
     setState(() {
       balance = userDoc['amount_balance'];
