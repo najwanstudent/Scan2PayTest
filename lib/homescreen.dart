@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int balance = 0;
   String qrData = "";
+  String icNumber = "";
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       balance = userDoc['amount_balance'];
       qrData = userDoc['qr']; // Assuming the QR data includes the user QR code
+      icNumber = userDoc['ic_number'];
     });
   }
 
@@ -55,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
             QrImageView(
-              data: '$qrData|$balance', // Include balance in the QR data
+              data: '$icNumber', // Include balance in the QR data
               size: 200.0,
             ),
             const SizedBox(height: 20),
