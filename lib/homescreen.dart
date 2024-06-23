@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:qr_flutter/qr_flutter.dart';
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-                pw.Text('Current Balance: \$${balance.toString()}'),
+                // pw.Text('Current Balance: \$${balance.toString()}'),
                 pw.SizedBox(height: 20),
                 pw.BarcodeWidget(
                   barcode: pw.Barcode.qrCode(),
@@ -101,9 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
+    // Save the PDF to the device
     final output =
-        await getExternalStorageDirectory(); // Use getApplicationDocumentsDirectory() for internal app storage
-    final file = File('${output!.path}/qr_code.pdf');
+        await getTemporaryDirectory(); // Use getTemporaryDirectory() for testing purposes
+    final file = File('${output.path}/qr_code.pdf');
     await file.writeAsBytes(await pdf.save());
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -113,10 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
         action: SnackBarAction(
           label: 'Open',
           onPressed: () {
-            // Open the PDF file
-            // You can use platform specific code to open the PDF
-            // For example, using the open_file package
-            // See: https://pub.dev/packages/open_file
+            OpenFile.open(file.path);
           },
         ),
       ),

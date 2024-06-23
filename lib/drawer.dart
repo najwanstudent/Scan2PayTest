@@ -13,10 +13,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Home'),
             onTap: () {
               Navigator.pop(context); // Close the drawer
-              Navigator.popUntil(
-                  context,
-                  ModalRoute.withName(
-                      '/')); // Pop all routes until reaching the home screen
+              Navigator.popUntil(context, ModalRoute.withName('/')); //
             },
           ),
           ListTile(
@@ -46,7 +43,7 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               })
         ],
       ),
