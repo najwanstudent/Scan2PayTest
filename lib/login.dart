@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:scan2pay/adminscreen/admin.dart';
 import 'package:scan2pay/homescreen.dart';
 import 'package:scan2pay/signup.dart'; // Import the SignUpPage
+import 'package:scan2pay/UserUidSingleton.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _login() async {
     final String icNumber = _icNumberController.text.trim();
     final String password = _passwordController.text.trim();
+    UserUidSingleton().userUid = icNumber; // Store userUid in the singleton
 
     if (icNumber.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -75,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
         .limit(1)
         .get();
 
+  
     if (adminSnapshot.docs.isNotEmpty) {
       Navigator.pushReplacement(
         context,
@@ -124,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         ),
-      ),
-    );
+     ),
+  );
   }
 }

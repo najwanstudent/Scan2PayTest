@@ -35,13 +35,13 @@ class Scan2PayApp extends StatelessWidget {
               userUid: '',
             ), // Route to HomeScreen
         '/transaction-history': (context) => TransactionHistoryScreen(),
-        '/edit-profile': (context) => const editProfile(),
+        '/edit-profile': (context) => const EditProfile(),
         '/faq': (context) => const FAQ(),
         '/admin': (context) =>
             const AdminScreen(), // Add route for admin screen
         '/admin-test-scan': (context) =>
             AmountInputScreen(), // Add route for admin screen
-      },
-    );
+    },
+  );
   }
 }
