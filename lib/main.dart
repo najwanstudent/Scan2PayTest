@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:scan2pay/TransactionHistory.dart';
 import 'package:scan2pay/adminscreen/inputamount.dart';
 import 'package:scan2pay/homescreen.dart'; // Import the HomeScreen class
 
@@ -9,6 +8,10 @@ import 'editProfile.dart';
 import 'faq.dart';
 import 'firebase_options.dart';
 import 'login.dart';
+import 'landing_page.dart';
+import 'OnboardingPage1.dart';
+import 'OnboardingPage2.dart';
+import 'TransactionHistory.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +33,10 @@ class Scan2PayApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       routes: {
-        '/': (context) => const LoginPage(), // Route to LoginPage
+        '/': (context) => LandingPage(),
+        '/onboarding1': (context) => OnboardingPage1(),
+        '/onboarding2': (context) => OnboardingPage2(),
+        '/login-page': (context) => const LoginPage(), // Route to LoginPage
         '/home-screen': (context) => const HomeScreen(
               userUid: '',
             ), // Route to HomeScreen
