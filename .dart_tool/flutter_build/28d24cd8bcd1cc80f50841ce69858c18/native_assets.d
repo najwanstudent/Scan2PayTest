@@ -1,0 +1,1 @@
+ C:\\Users\\jokth\\paynet-scan2pay\\Scan2PayTest\\.dart_tool\\flutter_build\\28d24cd8bcd1cc80f50841ce69858c18\\native_assets.yaml: 

@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'scan2pay-test-209897',
     storageBucket: 'scan2pay-test-209897.appspot.com',
   );
+
 }

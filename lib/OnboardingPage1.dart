@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'onboardingpage2.dart';
+import 'login.dart';
 
 class OnboardingPage1 extends StatelessWidget {
   @override
@@ -15,7 +16,10 @@ class OnboardingPage1 extends StatelessWidget {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: () {
-                  // Handle skip button press
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
                 child: Text('Skip'),
               ),

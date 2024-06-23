@@ -18,24 +18,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //num balance = 0;
   String icNumber = "";
+  String firstName = "";
+  String lastName = "";
+  num balance = 0;
 
   @override
   void initState() {
     super.initState();
-    _fetchBalance();
+    _fetchUserData();
   }
 
-  Future<void> _fetchBalance() async {
+  Future<void> _fetchUserData() async {
     DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.userUid)
         .get();
 
     setState(() {
-      //balance = userDoc['amount_balance'];
       icNumber = userDoc['ic_number'];
+      firstName = userDoc['first_name'];
+      lastName = userDoc['last_name'];
+      balance = userDoc['amount_balance'];
     });
   }
 
@@ -50,35 +54,27 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Current Balance',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              'Hi, $firstName $lastName',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Users')
-                  .doc(widget.userUid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Text(
-                    '\$0',
-                    style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-                  );
-                }
-                var userDoc = snapshot.data!;
-                num balance = userDoc['amount_balance'];
-
-                return Text(
-                  '\RM$balance',
-                  style: const TextStyle(
-                      fontSize: 48, fontWeight: FontWeight.bold),
-                );
-              },
+            const Text(
+              'Invest Smarter, Not Harder.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Wallet Balance',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'RM $balance',
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             QrImageView(
-              data: '$icNumber', // Include balance in the QR data
+              data: icNumber,
               version: QrVersions.auto,
               size: 200.0,
             ),
@@ -104,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-                //pw.Text('Current Balance: \$${balance.toString()}'),
                 pw.SizedBox(height: 20),
                 pw.BarcodeWidget(
                   barcode: pw.Barcode.qrCode(),

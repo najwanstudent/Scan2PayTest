@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "staging": "scan2pay-test-209897"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
