@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:scan2pay/adminscreen/admin.dart';
 import 'package:scan2pay/homescreen.dart';
-import 'package:scan2pay/signup.dart';
-
-import 'adminscreen/admin.dart';
+import 'package:scan2pay/signup.dart'; // Import the SignUpPage
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    // Check if the user is in the 'Users' collection
     QuerySnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('Users')
         .where('ic_number', isEqualTo: icNumber)
@@ -58,7 +58,8 @@ class _LoginPageState extends State<LoginPage> {
         .get();
 
     if (userSnapshot.docs.isNotEmpty) {
-      String userUid = userSnapshot.docs.first.id;
+      // User found, navigate to main screen
+      String userUid = userSnapshot.docs.first.id; // Get the user's UID
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen(userUid: userUid)),
@@ -66,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    // Check if the user is in the 'Admin' collection
     QuerySnapshot adminSnapshot = await FirebaseFirestore.instance
         .collection('Admin')
         .where('ic_number', isEqualTo: icNumber)
@@ -113,7 +115,9 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SignUpPage()), // Navigate to SignUpPage
                 );
               },
               child: const Text('Sign Up'),
