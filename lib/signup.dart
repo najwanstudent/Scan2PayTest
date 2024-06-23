@@ -24,8 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'last_name': _lastNameController.text,
           'ic_number': _icNumberController.text,
           'password': _passwordController.text,
-          'amount_balance': null,
-          'qr': null,
+          'amount_balance': 0,
         };
 
         // Save the user data to Firestore
