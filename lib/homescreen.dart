@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  num balance = 0;
+  //num balance = 0;
   String icNumber = "";
 
   @override
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .get();
 
     setState(() {
-      balance = userDoc['amount_balance'];
+      //balance = userDoc['amount_balance'];
       icNumber = userDoc['ic_number'];
     });
   }
@@ -54,9 +54,27 @@ class _HomeScreenState extends State<HomeScreen> {
               'Current Balance',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Text(
-              '\$$balance',
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(widget.userUid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Text(
+                    '\$0',
+                    style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                  );
+                }
+                var userDoc = snapshot.data!;
+                num balance = userDoc['amount_balance'];
+
+                return Text(
+                  '\RM$balance',
+                  style: const TextStyle(
+                      fontSize: 48, fontWeight: FontWeight.bold),
+                );
+              },
             ),
             const SizedBox(height: 20),
             QrImageView(
@@ -86,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-                pw.Text('Current Balance: \$${balance.toString()}'),
+                //pw.Text('Current Balance: \$${balance.toString()}'),
                 pw.SizedBox(height: 20),
                 pw.BarcodeWidget(
                   barcode: pw.Barcode.qrCode(),
