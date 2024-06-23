@@ -12,31 +12,37 @@ class AdminScreen extends StatefulWidget {
 
 class _AdminScreenState extends State<AdminScreen> {
   int amountToTransfer = 0;
+  bool isLoading = false;
 
   Future<void> _transferMoney() async {
-    // Replace with your actual Firestore path and document ID
-    String userId = "QSMVojIge9Z0QUfrIwg9"; // Replace with the actual user ID
+    setState(() {
+      isLoading = true; // Show loading indicator
+    });
 
-    DocumentReference userDoc =
-        FirebaseFirestore.instance.collection('Users').doc(userId);
+    final int transferAmount = amountToTransfer; // Store the amount to transfer
 
-    DocumentSnapshot userSnapshot = await userDoc.get();
-    int currentBalance = userSnapshot['amount_balance'];
+    QuerySnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('Users').get();
 
-    // Update balance
-    int newBalance = currentBalance + amountToTransfer;
-    await userDoc.update({'amount_balance': newBalance});
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (var userDoc in userSnapshot.docs) {
+      num currentBalance = userDoc['amount_balance'];
+      num newBalance = currentBalance + transferAmount;
+      batch.update(userDoc.reference, {'amount_balance': newBalance});
+    }
+
+    await batch.commit();
+
+    setState(() {
+      isLoading = false; // Hide loading indicator
+      amountToTransfer = 0; // Reset the transfer amount
+    });
 
     // Show confirmation
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(
-              'Transferred: \$$amountToTransfer. New Balance: \$$newBalance')),
+      SnackBar(content: Text('Transferred \$$transferAmount to all users')),
     );
-
-    setState(() {
-      amountToTransfer = 0; // Reset the transfer amount
-    });
   }
 
   @override
@@ -47,22 +53,27 @@ class _AdminScreenState extends State<AdminScreen> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: TextField(
-              decoration:
-                  const InputDecoration(labelText: 'Amount to Transfer'),
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  amountToTransfer = int.tryParse(value) ?? 0;
-                });
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                decoration:
+                    const InputDecoration(labelText: 'Amount to Transfer'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    amountToTransfer = int.tryParse(value) ?? 0;
+                  });
+                },
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: _transferMoney,
-              child: const Text('Transfer Money'),
+              onPressed: isLoading ? null : _transferMoney,
+              child: isLoading
+                  ? CircularProgressIndicator(color: Colors.white)
+                  : const Text('Transfer Money'),
             ),
           ),
         ],
