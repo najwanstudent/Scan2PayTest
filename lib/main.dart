@@ -30,12 +30,10 @@ class Scan2PayApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
       routes: {
-
-        '/': (context) => const LoginPage(),
+        '/': (context) => const LoginPage(), // Route to LoginPage
         '/home-screen': (context) => const HomeScreen(
               userUid: '',
-            ),
-      
+            ), // Route to HomeScreen
         '/transaction-history': (context) => TransactionHistoryScreen(),
         '/edit-profile': (context) => const editProfile(),
         '/faq': (context) => const FAQ(),
@@ -43,7 +41,6 @@ class Scan2PayApp extends StatelessWidget {
             const AdminScreen(), // Add route for admin screen
         '/admin-test-scan': (context) =>
             AmountInputScreen(), // Add route for admin screen
-
       },
     );
   }
