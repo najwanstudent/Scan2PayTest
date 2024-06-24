@@ -10,6 +10,7 @@ class TransactionHistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaction History'),
+        backgroundColor: Colors.purple[300], // Light purple app bar background
       ),
       drawer: AppDrawer(userUid: UserUidSingleton().userUid),
       body: StreamBuilder<QuerySnapshot>(
@@ -39,20 +40,26 @@ class TransactionHistoryScreen extends StatelessWidget {
               final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(timestamp); // Format the timestamp
 
               return Card(
+                elevation: 4,
                 margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                color: Colors.grey[200], // Light grey card background
                 child: ListTile(
                   title: Text(
                     'Transaction ID: ${transaction.id}',
-                    style: TextStyle(fontSize: 14), // Reduced font size
+                    style: TextStyle(fontSize: 14, color: Colors.purple[800]), // Purple text color
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Amount: \$$amount',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red), // Highlight amount
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple), // Purple amount color
                       ),
-                      Text('Date/Time: $formattedTimestamp'),
+                      SizedBox(height: 4),
+                      Text(
+                        'Date/Time: $formattedTimestamp',
+                        style: TextStyle(color: Colors.grey[600]), // Grey timestamp color
+                      ),
                     ],
                   ),
                 ),

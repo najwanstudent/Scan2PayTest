@@ -46,6 +46,7 @@ class _FAQState extends State<FAQ> {
     return Scaffold(
       appBar: AppBar(
         title: Text('FAQ'),
+        backgroundColor: Colors.purple[300], // Light purple background for app bar
       ),
       drawer: AppDrawer(userUid: userUid), // Pass userUid to AppDrawer
       body: FutureBuilder<List<DocumentSnapshot>>(
@@ -72,6 +73,8 @@ class _FAQState extends State<FAQ> {
                       hintText: 'Enter a question',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(),
+                      fillColor: Colors.purple[50], // Light purple background for input box
+                      filled: true,
                     ),
                   ),
                 ),
