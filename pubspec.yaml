@@ -45,6 +45,7 @@ dependencies:
   path_provider: ^2.1.3
   pdf: ^3.10.8
   open_file: ^3.3.2
+  page_view_dot_indicator: ^2.3.0
   
 
 dev_dependencies:
