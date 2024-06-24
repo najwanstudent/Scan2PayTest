@@ -142,11 +142,13 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+    String? userUid = UserUidSingleton().userUid;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
-      drawer: const AppDrawer(),
+      drawer: AppDrawer(userUid: userUid!), // Pass userUid to AppDrawer
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -258,7 +260,7 @@ class _EditProfileState extends State<EditProfile> {
             ],
           ),
         ),
-    ),
-   );
+      ),
+    );
   }
 }

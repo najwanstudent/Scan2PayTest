@@ -19,7 +19,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //num balance = 0;
   String icNumber = "";
 
   @override
@@ -35,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
         .get();
 
     setState(() {
-      //balance = userDoc['amount_balance'];
       icNumber = userDoc['ic_number'];
     });
   }
@@ -46,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Scan2Pay'),
       ),
-      drawer: AppDrawer(),
+      drawer: AppDrawer(userUid: widget.userUid), // Pass userUid to AppDrawer
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -105,10 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: pw.Column(
               mainAxisAlignment: pw.MainAxisAlignment.center,
               children: [
-
-                // pw.Text('Current Balance: \$${balance.toString()}'),
-
-           
                 pw.SizedBox(height: 20),
                 pw.BarcodeWidget(
                   barcode: pw.Barcode.qrCode(),

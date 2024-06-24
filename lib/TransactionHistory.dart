@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'UserUidSingleton.dart'; // Import the UserUidSingleton class
+import 'drawer.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   @override
@@ -10,6 +11,7 @@ class TransactionHistoryScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Transaction History'),
       ),
+      drawer: AppDrawer(userUid: UserUidSingleton().userUid),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Transactions')

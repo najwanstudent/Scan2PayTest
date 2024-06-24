@@ -37,8 +37,8 @@ class Scan2PayApp extends StatelessWidget {
         '/onboarding1': (context) => OnboardingPage1(),
         '/onboarding2': (context) => OnboardingPage2(),
         '/login-page': (context) => const LoginPage(), // Route to LoginPage
-        '/home-screen': (context) => const HomeScreen(
-              userUid: '',
+        '/home-screen': (context) => HomeScreen(
+              userUid: ModalRoute.of(context)!.settings.arguments as String,
             ), // Route to HomeScreen
         '/transaction-history': (context) => TransactionHistoryScreen(),
         '/edit-profile': (context) => const EditProfile(),
