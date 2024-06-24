@@ -33,28 +33,28 @@ class _EditProfileState extends State<EditProfile> {
     String? userUid = UserUidSingleton().userUid;
     print('User UID: $userUid');
 
-      try {
-        DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userUid)
-            .get();
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userUid)
+          .get();
 
-        if (userDoc.exists && userDoc.data() != null) {
-          var data = userDoc.data()!;
-          setState(() {
-            _firstNameController.text = data['first_name'] as String? ?? '';
-            _lastNameController.text = data['last_name'] as String? ?? '';
-            _icNumberController.text = data['ic_number'] as String? ?? '';
-            password = data['password'] as String?;
-            _phoneNumberController.text = data['phone_number'] as String? ?? '';
-            _emailController.text = data['e_mail'] as String? ?? '';
-          });
-        } else {
-          print('User document not found or missing fields');
-        }
-      } catch (e) {
-        print('Error loading user data: $e');
+      if (userDoc.exists && userDoc.data() != null) {
+        var data = userDoc.data()!;
+        setState(() {
+          _firstNameController.text = data['first_name'] as String? ?? '';
+          _lastNameController.text = data['last_name'] as String? ?? '';
+          _icNumberController.text = data['ic_number'] as String? ?? '';
+          password = data['password'] as String?;
+          _phoneNumberController.text = data['phone_number'] as String? ?? '';
+          _emailController.text = data['e_mail'] as String? ?? '';
+        });
+      } else {
+        print('User document not found or missing fields');
       }
+    } catch (e) {
+      print('Error loading user data: $e');
+    }
   }
 
   void _changePassword() async {
@@ -147,117 +147,150 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        backgroundColor: Colors.deepPurple,
       ),
       drawer: AppDrawer(userUid: userUid!), // Pass userUid to AppDrawer
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Edit Profile Page',
-                style: TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _icNumberController,
-                decoration: InputDecoration(
-                  labelText: 'IC Number',
-                  labelStyle: const TextStyle(color: Colors.grey),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
+      body: Container(
+        color: Colors.deepPurple.shade50,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Profile Page',
+                  style: TextStyle(fontSize: 24, color: Colors.deepPurple),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _icNumberController,
+                  decoration: InputDecoration(
+                    labelText: 'IC Number',
+                    labelStyle: TextStyle(color: Colors.grey.shade700),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                  ),
+                  readOnly: true,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: InputDecoration(
+                    labelText: 'First Name',
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepPurple),
+                    ),
+                  ),
+                  readOnly: !_isEditing,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Last Name',
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepPurple),
+                    ),
+                  ),
+                  readOnly: !_isEditing,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _phoneNumberController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: _phoneNumberController.text.isEmpty ? 'Optional' : '',
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepPurple),
+                    ),
+                  ),
+                  readOnly: !_isEditing,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    hintText: _emailController.text.isEmpty ? 'Optional' : '',
+                    labelStyle: TextStyle(color: Colors.deepPurple),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepPurple),
+                    ),
+                  ),
+                  readOnly: !_isEditing,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _isEditing
+                      ? _confirmChanges
+                      : () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                  child: Text(
+                    _isEditing ? 'Save' : 'Edit',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
-                readOnly: true,
-              ),
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(labelText: 'First Name'),
-                readOnly: !_isEditing,
-              ),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(labelText: 'Last Name'),
-                readOnly: !_isEditing,
-              ),
-              TextFormField(
-                controller: _phoneNumberController,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  hintText: _phoneNumberController.text.isEmpty ? 'Optional' : '',
-                ),
-                readOnly: !_isEditing,
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  hintText: _emailController.text.isEmpty ? 'Optional' : '',
-                ),
-                readOnly: !_isEditing,
-              ),
-              TextFormField(
-                initialValue: '*',
-                decoration: const InputDecoration(labelText: 'Password'),
-                readOnly: true,
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Change Password'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextField(
-                              controller: _passwordController,
-                              decoration: const InputDecoration(
-                                labelText: 'Enter Current Password',
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Change Password'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: _passwordController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Enter Current Password',
+                                ),
+                                obscureText: true,
                               ),
-                              obscureText: true,
+                              TextField(
+                                controller: _newPasswordController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Enter New Password',
+                                ),
+                                obscureText: true,
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
                             ),
-                            TextField(
-                              controller: _newPasswordController,
-                              decoration: const InputDecoration(
-                                labelText: 'Enter New Password',
-                              ),
-                              obscureText: true,
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _changePassword();
+                              },
+                              child: const Text('Change'),
                             ),
                           ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _changePassword();
-                            },
-                            child: const Text('Change'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isEditing
-                    ? _confirmChanges
-                    : () {
-                        setState(() {
-                          _isEditing = true;
-                        });
+                        );
                       },
-                child: Text(_isEditing ? 'Save' : 'Edit'),
-              ),
-            ],
+                    );
+                  },
+                  child: Text(
+                    'Change Password',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
