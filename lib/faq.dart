@@ -1,5 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'drawer.dart'; // Import the AppDrawer class
 
 class FAQ extends StatefulWidget {
   const FAQ({Key? key}) : super(key: key);
@@ -40,10 +41,13 @@ class _FAQState extends State<FAQ> {
 
   @override
   Widget build(BuildContext context) {
+    final String userUid = ModalRoute.of(context)!.settings.arguments as String;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('FAQ'),
       ),
+      drawer: AppDrawer(userUid: userUid), // Pass userUid to AppDrawer
       body: FutureBuilder<List<DocumentSnapshot>>(
         future: faqSnapshot,
         builder: (context, snapshot) {
